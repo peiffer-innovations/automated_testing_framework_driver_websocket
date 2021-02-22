@@ -18,7 +18,6 @@ dev_dependencies:
   args: ^1.6.0
   test: any
   test_coverage: any
-
-dependency_overrides:
-  automated_testing_framework_models:
-    path: ../automated_testing_framework_models
+# dependency_overrides:
+#   automated_testing_framework_models:
+#     path: ../automated_testing_framework_models
