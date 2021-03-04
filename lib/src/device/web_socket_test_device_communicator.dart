@@ -261,10 +261,15 @@ class WebSocketTestDeviceCommunicator extends TestDeviceCommunicator {
     _online = false;
     try {
       await _channel?.sink?.add(GoodbyeCommand().toString());
+    } catch (e) {
+      // no-op
+    }
+    try {
       await _channel?.sink?.close(200);
     } catch (e) {
       // no-op
     }
+
     await _channelSubscription?.cancel();
     _channelSubscription = null;
     _channel = null;

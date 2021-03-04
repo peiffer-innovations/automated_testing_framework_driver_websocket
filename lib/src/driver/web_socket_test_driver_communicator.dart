@@ -245,8 +245,16 @@ class WebSocketTestDriverCommunicator {
     _reconnectTimer?.cancel();
     _reconnectTimer = null;
     _online = false;
-    await _channel?.sink?.add(GoodbyeCommand().toString());
-    await _channel?.sink?.close(200);
+    try {
+      await _channel?.sink?.add(GoodbyeCommand().toString());
+    } catch (e) {
+      // no-op
+    }
+    try {
+      await _channel?.sink?.close(200);
+    } catch (e) {
+      // no-op
+    }
     await _channelSubscription?.cancel();
     _channelSubscription = null;
     _channel = null;
