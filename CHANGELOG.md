@@ -1,3 +1,14 @@
+## [0.9.3] - March 9th, 2021
+
+* More bug fixes
+* Null Safety
+
+
+## [0.9.2] - March 7th, 2021
+
+* More bug fixes
+
+
 ## [0.9.1] - March 3rd, 2021
 
 * Minor bug fixes

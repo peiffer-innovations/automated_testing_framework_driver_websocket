@@ -1,4 +1,5 @@
 import 'dart:convert';
+import 'dart:io';
 
 import 'package:automated_testing_framework/automated_testing_framework.dart';
 import 'package:automated_testing_framework_driver_websocket/device.dart';
@@ -7,7 +8,6 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:logging/logging.dart';
-import 'package:websafe_platform/websafe_platform.dart';
 
 void main() {
   TestAppSettings.initialize(appIdentifier: 'ATF Websocket');
@@ -26,12 +26,11 @@ void main() {
   });
 
   var gestures = TestableGestures();
-  var wsPlatform = WebsafePlatform();
-  if (wsPlatform.isFuchsia() ||
-      wsPlatform.isLinux() ||
-      wsPlatform.isMacOS() ||
-      wsPlatform.isWindows() ||
-      wsPlatform.isWeb()) {
+  if (kIsWeb ||
+      Platform.isFuchsia ||
+      Platform.isLinux ||
+      Platform.isMacOS ||
+      Platform.isWindows) {
     gestures = TestableGestures(
       widgetLongPress: null,
       widgetSecondaryLongPress: TestableGestureAction.open_test_actions_page,

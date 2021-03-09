@@ -103,7 +103,7 @@ Future<void> main(List<String> args) async {
     exit(1);
   }
 
-  if (tests?.isNotEmpty != true) {
+  if (tests.isNotEmpty != true) {
     logger.severe('Unable to load data for test(s): $testPath');
     exit(1);
   }

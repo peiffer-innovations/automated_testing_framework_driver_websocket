@@ -1,4 +1,5 @@
 import 'package:automated_testing_framework_driver_websocket/device.dart';
+import 'package:automated_testing_framework_models/automated_testing_framework_models.dart';
 import 'package:test/test.dart';
 
 void main() {
@@ -6,7 +7,7 @@ void main() {
     try {
       WebSocketTestDeviceCommunicator(
         secret: '',
-        testControllerState: null,
+        testControllerState: TestControllerState(),
         url: '',
       );
     } catch (e) {

@@ -102,7 +102,7 @@ Future<void> main(List<String> args) async {
         completer.complete();
       } else {
         completer.completeError(
-          '[ERROR]: unknown response type: ${response?.runtimeType?.toString()}',
+          '[ERROR]: unknown response type: ${response?.runtimeType.toString()}',
         );
       }
     }
