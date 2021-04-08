@@ -243,13 +243,13 @@ class WebSocketTestDriverCommunicator {
     _reconnectTimer = null;
     _online = false;
     try {
-      await _channel?.sink.close(200);
+      await _channel?.sink.close();
     } catch (e) {
       // no-op
     }
+    _channel = null;
     await _channelSubscription?.cancel();
     _channelSubscription = null;
-    _channel = null;
 
     if (_onConnectionChanged != null) {
       await _onConnectionChanged!(false);
@@ -261,7 +261,16 @@ class WebSocketTestDriverCommunicator {
         var channel = await WebSocketChannel.connect(uri);
         _channel = channel;
         _reconnectTimer?.cancel();
-        _reconnectTimer = Timer(maxConnectionTime, () => _connect());
+        _reconnectTimer = Timer(maxConnectionTime, () {
+          try {
+            _channel!.sink.add(GoodbyeCommand(complete: false).toString());
+            _logger.info('[RECONNECT]: sent goodbye');
+          } catch (e) {
+            _logger.info('[RECONNECT]: unable to say goodbye');
+          }
+
+          _connect();
+        });
 
         await _authenticate();
         if (_channel != null) {
@@ -284,8 +293,15 @@ class WebSocketTestDriverCommunicator {
         delay = Duration.zero;
 
         var command = _commandQueue.removeAt(0);
-        _channel!.sink.add(command.toString());
-        _logger.info('[SEND COMMAND]: command sent: [${command.type}]');
+        try {
+          _channel!.sink.add(command.toString());
+          _logger.info('[SEND COMMAND]: command sent: [${command.type}]');
+        } catch (e) {
+          _logger.info(
+            '[SEND COMMAND]: error sending command, retrying in 1 second.',
+          );
+          delay = Duration(seconds: 1);
+        }
       }
 
       if (_commandQueue.isNotEmpty == true) {

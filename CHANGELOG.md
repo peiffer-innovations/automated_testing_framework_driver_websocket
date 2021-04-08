@@ -1,3 +1,9 @@
+## [0.9.4] - April 7th, 2021
+
+* Dependency updates
+* Minor driver updates
+
+
 ## [0.9.3] - March 9th, 2021
 
 * More bug fixes
