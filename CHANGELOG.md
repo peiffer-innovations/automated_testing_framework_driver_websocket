@@ -1,3 +1,8 @@
+## [0.9.5] - April 9th, 2021
+
+* Updated to allow passing a custom `Logger` to the driver.
+
+
 ## [0.9.4] - April 7th, 2021
 
 * Dependency updates

@@ -12,15 +12,15 @@ class WebSocketTestDriverCommunicator {
     required this.appIdentifier,
     String? driverId,
     required this.driverName,
+    Logger? logger,
     this.maxConnectionTime = const Duration(minutes: 30),
     this.pingTime = const Duration(seconds: 30),
     required String secret,
     required this.url,
   })   : assert(secret.isNotEmpty == true),
         driverId = driverId ?? Uuid().v4(),
+        _logger = logger ?? Logger('WebSocketTestDriverCommunicator'),
         _secret = secret;
-
-  static final Logger _logger = Logger('WebSocketTestDriverCommunicator');
 
   final String appIdentifier;
   final String driverId;
@@ -30,6 +30,7 @@ class WebSocketTestDriverCommunicator {
   final String url;
 
   final List<DeviceCommand> _commandQueue = [];
+  final Logger _logger;
   final String _secret;
 
   bool _active = false;
@@ -79,6 +80,10 @@ class WebSocketTestDriverCommunicator {
   }
 
   Future<void> deactivate() async {
+    try {
+      _channel?.sink.add(GoodbyeCommand(complete: true).toString());
+    } catch (_) {}
+
     _active = false;
     await _commandStreamController?.close();
     _commandStreamController = null;
