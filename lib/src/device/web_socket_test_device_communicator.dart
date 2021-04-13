@@ -179,7 +179,10 @@ class WebSocketTestDeviceCommunicator extends TestDeviceCommunicator {
             _pingTimer = Timer.periodic(pingTime, (timer) {
               if (_online == true) {
                 sendCommand(
-                  PingCommand(testControllerState: _testControllerState),
+                  PingCommand(
+                    testControllerState: _testControllerState,
+                    testDeviceInfo: TestDeviceInfo.instance,
+                  ),
                 );
               }
             });

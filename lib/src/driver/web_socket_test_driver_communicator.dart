@@ -109,11 +109,18 @@ class WebSocketTestDriverCommunicator {
     }
   }
 
-  Future<void> sendCommand(DeviceCommand command) async {
+  Future<void> sendCommand(
+    DeviceCommand command, {
+    bool instant = false,
+  }) async {
     if (_active == true) {
-      _commandQueue.add(command);
+      if (instant == true && _channel != null) {
+        _channel!.sink.add(command.toJson());
+      } else {
+        _commandQueue.add(command);
 
-      await _sendCommands();
+        await _sendCommands();
+      }
     }
   }
 

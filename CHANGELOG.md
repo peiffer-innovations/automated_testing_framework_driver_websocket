@@ -1,3 +1,9 @@
+## [0.9.5+1] - April 13th, 2021
+
+* Updated to allow instant sending of driver commands.
+* Updated to send device info on ping commpands.
+
+
 ## [0.9.5] - April 9th, 2021
 
 * Updated to allow passing a custom `Logger` to the driver.
