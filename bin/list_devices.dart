@@ -76,7 +76,7 @@ Future<void> main(List<String> args) async {
   );
 
   comm.onConnectionChanged =
-      (connected) async => logger.info('[CONNECTED]: $connected');
+      (connected) async => logger.fine('[CONNECTED]: $connected');
   await comm.activate();
   logger.info('[ACTIVATED]');
 

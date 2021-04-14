@@ -155,7 +155,7 @@ class WebSocketTestDriverCommunicator {
                 signature: signature,
               ).toString(),
             );
-            _logger.info('[CONNECTED]: challenge response sent');
+            _logger.fine('[CONNECTED]: challenge response sent');
             challengeResponded = true;
           } else if (challenge == null) {
             _commandStreamController?.add(cmd);
@@ -307,9 +307,9 @@ class WebSocketTestDriverCommunicator {
         var command = _commandQueue.removeAt(0);
         try {
           _channel!.sink.add(command.toString());
-          _logger.info('[SEND COMMAND]: command sent: [${command.type}]');
+          _logger.finer('[SEND COMMAND]: command sent: [${command.type}]');
         } catch (e) {
-          _logger.info(
+          _logger.fine(
             '[SEND COMMAND]: error sending command, retrying in 1 second.',
           );
           delay = Duration(seconds: 1);

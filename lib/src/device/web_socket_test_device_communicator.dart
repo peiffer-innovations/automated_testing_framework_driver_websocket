@@ -145,7 +145,7 @@ class WebSocketTestDeviceCommunicator extends TestDeviceCommunicator {
                 signature: signature,
               ).toString(),
             );
-            _logger.info('[CONNECTED]: challenge response sent');
+            _logger.fine('[CONNECTED]: challenge response sent');
             challengeResponded = true;
           } else if (challenge == null) {
             _commandStreamController?.add(cmd);
@@ -316,10 +316,10 @@ class WebSocketTestDeviceCommunicator extends TestDeviceCommunicator {
           // Don't log out ACK's because if the log streaming is active, this
           // will actually create an infinite loop because we'd be logging that
           // we logged the sent and repeat.
-          _logger.info('[SEND COMMAND]: command sent: [${command.type}]');
+          _logger.finer('[SEND COMMAND]: command sent: [${command.type}]');
         }
       } else {
-        _logger.info('[SEND COMMAND]: offline, waiting.');
+        _logger.fine('[SEND COMMAND]: offline, waiting.');
       }
 
       if (_commandQueue.isNotEmpty == true) {
