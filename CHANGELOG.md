@@ -1,3 +1,8 @@
+## [0.9.5+2] - April 14th, 2021
+
+* Reduced logging
+
+
 ## [0.9.5+1] - April 13th, 2021
 
 * Updated to allow instant sending of driver commands.
