@@ -7,7 +7,42 @@ import 'package:logging/logging.dart';
 import 'package:uuid/uuid.dart';
 import 'package:web_socket_channel/web_socket_channel.dart';
 
+/// Communicator suited for test drivers to be able to communicate with devices
+/// via the command and control server provided by the
+/// https://pub.dev/packages/automated_testing_framework_server_websocket
+/// package.
+///
+/// Once constructed, the communicator must then be activated through the
+/// [activate] function.
 class WebSocketTestDriverCommunicator {
+  /// The communicator that can be used by applications to drive test devices
+  /// via the websocket server.
+  ///
+  /// The [appIdentifier] must match either the application's build time package
+  /// identifier, or more ideally, the value past into the application at
+  /// startup via [TestAppSettings.initialize].
+  ///
+  /// The [driverId] is optional and will default to a random UUID if not set.
+  ///
+  /// The [driverName] is intended to be a human readable display value to allow
+  /// members of a team to see who is utilizing which devices.
+  ///
+  /// The [logger] is an optional logger that an application may pass in to have
+  /// the log events go via a custom logger rather than a class default one.
+  ///
+  /// The [maxConnectionTime] describes the maxiumum amount of time the
+  /// communicator may remain connected to the server before it should
+  /// disconnect and reconnect.  Many hosted websocket servers only allow a
+  /// limited amount of time that a websocket can be open before requiring a
+  /// reconnect.  Use an arbitrarily large value to effectively mean "forever".
+  ///
+  /// The [pingTime] describes how long to wait between pings to the server.
+  ///
+  /// The [secret] is the driver secret or pre-shared-key that has been loaded
+  /// on the server.  This key will be used to generate and respond to HMAC
+  /// based authentication challenges to authenticate with the server.
+  ///
+  /// The [url] is the websocket based URL of the server.
   WebSocketTestDriverCommunicator({
     required this.appIdentifier,
     String? driverId,
@@ -17,16 +52,37 @@ class WebSocketTestDriverCommunicator {
     this.pingTime = const Duration(seconds: 30),
     required String secret,
     required this.url,
-  })   : assert(secret.isNotEmpty == true),
+  })  : assert(secret.isNotEmpty == true),
         driverId = driverId ?? Uuid().v4(),
         _logger = logger ?? Logger('WebSocketTestDriverCommunicator'),
         _secret = secret;
 
+  /// The app identifier.  This may or may not be the "package" used by the
+  /// build.  Ideally as apps may have multiple packages for testing though, it
+  /// is a specific unique identifier for the application that is passed in to
+  /// the application via [TestAppSettings.initialize].
   final String appIdentifier;
+
+  /// The unique identifier of the driver.  This defaults to being a UUID value
+  /// but may be specified by the driving application.
   final String driverId;
+
+  /// The human readable name of the driver.  This is not used by the system
+  /// directly but is rather provided by the system for team members to be able
+  /// to see who is currently utilizing which connected device.
   final String driverName;
+
+  /// The maximum amount of time the communicator can be connected to the
+  /// server for each connected sessions.  After this time expires, the
+  /// communicator will disconnect from the server and immediately attempt to
+  /// reconnect to resume the session.
   final Duration maxConnectionTime;
+
+  /// The amount of time between sending ping commands to inform the server that
+  /// this driver is still active and processing commands.
   final Duration pingTime;
+
+  /// The websocket URL for the backend server.
   final String url;
 
   final List<DeviceCommand> _commandQueue = [];
@@ -38,22 +94,36 @@ class WebSocketTestDriverCommunicator {
   StreamSubscription<dynamic>? _channelSubscription;
   StreamController<DeviceCommand>? _commandStreamController;
   Timer? _commandTimer;
+  bool deactivated = false;
   bool _online = false;
   Future<void> Function(bool)? _onConnectionChanged;
   Timer? _pingTimer;
   Timer? _reconnectTimer;
   Timer? _timer;
 
+  /// Returns whether or not the communicator is currently active.
   bool get active => _active == true;
 
+  /// Provides a stream of commands that an application can listen to in order
+  /// to provide their own handlers or actions based off of commands received.
   Stream<DeviceCommand> get commandStream => _commandStreamController!.stream;
 
+  /// Returns whether the communicator is currently connected to the back end.
+  /// A communicator may be [active] but not connected either because the back
+  /// end is refusing connections or the connection is being (re-)established.
   bool get connected => _channel != null;
 
+  /// A callback that the application may set in order to receive noticies of
+  /// when the communication's connectivity status changes.
   set onConnectionChanged(Future<void> Function(bool) onConnectionChanged) =>
       _onConnectionChanged = onConnectionChanged;
 
+  /// Activates the communicator and begins trying to connect to and communicate
+  /// with the backend server.
   Future<void> activate() async {
+    if (deactivated == true) {
+      throw Exception('Communicator has already been deactivated');
+    }
     _active = true;
 
     _commandTimer?.cancel();
@@ -79,36 +149,46 @@ class WebSocketTestDriverCommunicator {
     _connect();
   }
 
+  /// Deactivates the communicator.  Once deactivated
   Future<void> deactivate() async {
-    try {
-      _channel?.sink.add(GoodbyeCommand(complete: true).toString());
-    } catch (_) {}
+    if (!deactivated) {
+      deactivated = true;
 
-    _active = false;
-    await _commandStreamController?.close();
-    _commandStreamController = null;
-    _commandQueue.clear();
+      try {
+        _channel?.sink.add(GoodbyeCommand(complete: true).toString());
+      } catch (_) {}
 
-    await _channelSubscription?.cancel();
-    _channelSubscription = null;
+      _active = false;
+      await _commandStreamController?.close();
+      _commandStreamController = null;
+      _commandQueue.clear();
 
-    _commandTimer?.cancel();
-    _commandTimer = null;
+      await _channelSubscription?.cancel();
+      _channelSubscription = null;
 
-    _pingTimer?.cancel();
-    _pingTimer = null;
+      _commandTimer?.cancel();
+      _commandTimer = null;
 
-    _reconnectTimer?.cancel();
-    _reconnectTimer = null;
+      _pingTimer?.cancel();
+      _pingTimer = null;
 
-    _timer?.cancel();
-    _timer = null;
+      _reconnectTimer?.cancel();
+      _reconnectTimer = null;
 
-    if (_onConnectionChanged != null) {
-      await _onConnectionChanged!(false);
+      _timer?.cancel();
+      _timer = null;
+
+      if (_onConnectionChanged != null) {
+        await _onConnectionChanged!(false);
+      }
     }
   }
 
+  /// Sends the given [command] to the back end server.  By default the command
+  /// will be inserted into the queue and sent after all other previously queued
+  /// commands.  Setting the [instant] flag to true will bypass the queue and
+  /// send the command immediately.  Howver, instant commands will also be lost
+  /// if the communicator is not currently connected.
   Future<void> sendCommand(
     DeviceCommand command, {
     bool instant = false,

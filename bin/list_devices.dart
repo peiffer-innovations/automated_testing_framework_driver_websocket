@@ -30,7 +30,7 @@ Future<void> main(List<String> args) async {
   );
   parser.addOption(
     'driver',
-    abbr: 'd',
+    abbr: 'n',
     help: 'Name of the driver.',
   );
   parser.addOption(
