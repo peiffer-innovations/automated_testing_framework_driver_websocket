@@ -129,7 +129,8 @@ Full         | Short | Optional Env Var     | Description
 ```
 dart bin/list_devices.dart
   -a | --app [appIdentifier]
-  -d | --driver [testDriverName]
+  -d | --device [deviceId]
+  -n | --driver [testDriverName]
   -s | --secret [driverSecret]
   -t | --test [path/to/test.json]
   -u | --url [websocketUrl]
@@ -140,7 +141,8 @@ dart bin/list_devices.dart
 Full         | Short | Optional Env Var     | Description
 -------------|-------|----------------------|------------
 `--app`      | `-a`  | `ATF_APP_IDENTIFIER` | The `appIdentifier` the application is using.
-`--driver`   | `-d`  | `ATF_DRIVER_NAME`    | The human readable name of the driver.
+`--device`   | `-d`  | _n/a                 | Unique device identifier.  This can be obtained from the `list_devices` script, or set in the `TestAppSettings` when the device starts the application.
+`--driver`   | `-n`  | `ATF_DRIVER_NAME`    | The human readable name of the driver.
 `--secret`   | `-s`  | `ATF_DRIVER_SECRET`  | The pre-shared key for the server's driver key.
 `--test`     | `-t`  | _n/a_                | Path to the JSON file containing the test files.
 `--url`      | `-u`  | `ATF_WEBSOCKET_URL`  | The websocket URL for the server.

@@ -1,7 +1,7 @@
-## [1.0.0] - May 31st, 2021
+## [1.0.0+1] - May 31st, 2021
 
-* Version 1.0!!!
 * Added documentation
+* Version 1.0!!!
 
 
 ## [0.9.5+2] - April 14th, 2021
