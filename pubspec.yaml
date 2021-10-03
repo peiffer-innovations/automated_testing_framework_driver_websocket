@@ -1,6 +1,6 @@
 name: automated_testing_framework_driver_websocket
 description: Websocket based driver for the automated testing framework.
-version: 1.0.0+2
+version: 1.0.0+3
 homepage: https://github.com/peiffer-innovations/automated_testing_framework_driver_websocket
 
 environment:

@@ -1,4 +1,4 @@
-## [1.0.0+2] - October 3rd, 2021
+## [1.0.0+3] - October 3rd, 2021
 
 * More documentation updates
 
