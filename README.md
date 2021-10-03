@@ -7,14 +7,21 @@
 * [Example Scripts](#example-scripts)
     * [list_devices](#list_devices)
     * [run_test](#run_test)
+* [Running the Example App](#running-the-example-app)
+* [Commands](#commands)
+* [Creating Custom Commands](#creating-custom-commands)
 
 ---
 
 ## Introduction 
 
-Websocket based driver for the [Automated Testing Framework](https://pub.dev/packages/automated_testing_framework_driver_websocket).
+This package provides a mechanism for running tests on remote devices in conjunction with the [Websocket Server](https://pub.dev/packages/automated_testing_framework_server_websocket).
 
-This packages allows for remote control of a Flutter based application in coordination with the [Automated Testing Framework Server Websocket](https://pub.dev/packages/automated_testing_framework_server_websocket) package.
+Both the application and the server need a preshared key to authenticate the device to the server.  The key can be a key of any length that matches your preshared key security constraints.
+
+When launched, the application will attempt to connect to the server using the givne Websocket URL.  The server and the app will mutually authenticate so that each knows the other can be trusted.
+
+The library supports multiple built in [Commands](#commands) that can be sent via a driver script or program.  It also provides a plugin mechanism for libraries or applications to provide their own commands that can be sent and executed by a host device.
 
 
 ## App Usage
@@ -154,3 +161,45 @@ There are three example tests included with this package that can be used to run
 1. `assets/buttons.json`
 2. `assets/double_tap.json`
 3. `assets/dropdowns.json`
+
+
+---
+
+## Running the Example App
+
+The fastest way to run the example is to create an `assets/config.json` file with the following data:
+
+```json
+{
+  "secret": "my-preshared-secret-key",
+  "url": "ws://localhost:15333"
+}
+```
+
+With that configuration file, the application can connect to the back end and authenticate with the server.  When running the example app with a server and the scripts, the `app` parameter should be set to `ATF Websocket`.
+
+As a note, Android's Emulator is unique in that it uses `localhost` to refer to the emulated device rather than the host computer.  Avoid using `localhost` for a URL when running on Android.  Instead, for Android Emulators, use the loopback IP: `10.0.2.2`.
+
+---
+
+## Commands
+
+This package has a series of built in commands that it knows how to handle within the application itself:
+
+Command Class                  | Description
+-------------------------------|---------------------------------
+`ReleaseDeviceCommand`         | Informs the device that the driver is no longer utilizing it, making it available for net new drivers.
+`RequestScreenshotCommand`     | Requests a screenshot from the device right now.
+`ReserveDeviceCommand`         | Informs the device that a driver has requested exclusive control of the device.
+`RunTestCommand`               | Runs a test on the device.  In order for the device to accept this command it must first be reserved.
+`StartLogStreamCommand`        | Asks the device to start streaming log events back to the driver.  In order for the device to accept this command it must first be reserved.
+`StartScreenshotStreamCommand` | Asks the device to start sending screen shots repeatedly over a defined interval.  In order for the device to accept this command it must first be reserved.
+`StopLogStreamCommand`         | Asks the device to stop streaming log events.
+`StopScreenshotStreamCommand`  | Asks the device to stop streaming screenshots.
+
+---
+
+## Creating Custom Commands
+
+An application may require custom commands to extend the functionality of the testing system.  When this is required, the application must first register the commands via the [DeviceCommand](https://pub.dev/documentation/automated_testing_framework_models/latest/automated_testing_framework_models/DeviceCommand-class.html)'s `registerCustomCommands` function.  Once commands are registered, the application can listen to the [WebSocketTestDeviceCommunicator](https://pub.dev/documentation/automated_testing_framework_driver_websocket/latest/device/WebSocketTestDeviceCommunicator-class.html)'s `commandStream` and react appropriately when a custom command comes in.
+

@@ -5,8 +5,8 @@ import 'dart:io';
 import 'package:args/args.dart';
 import 'package:automated_testing_framework_driver_websocket/driver.dart';
 import 'package:automated_testing_framework_models/automated_testing_framework_models.dart';
-import 'package:crypto/crypto.dart';
 import 'package:convert/convert.dart';
+import 'package:crypto/crypto.dart';
 import 'package:logging/logging.dart';
 
 Future<void> main(List<String> args) async {
@@ -56,10 +56,33 @@ Future<void> main(List<String> args) async {
     abbr: 'u',
     help: 'URL for the server.',
   );
+  parser.addFlag('help', abbr: 'h');
   var results = parser.parse(args);
 
-  var appIdentifier =
-      results['app'] ?? Platform.environment['ATF_APP_IDENTIFIER'] ?? 'default';
+  if (results['help'] == true) {
+    // ignore: avoid_print
+    print('''
+Usage: run [<options>]
+
+Starts the websocket server for the testing framework.
+
+-a, --app=<app-identifier>     The application identifier.
+-d, --device=<device-id>       Identifier of the device to be driven.
+-h, --help                     Display this help message.
+-n, --driver=<driver-name>     Identifier of the device to be driven.
+-s, --secret=<port>            Secret text for communicating with the server.
+-t, --test                     Path to the test to run
+-u, --url                      Websocket URL for the server.
+
+Optionally, environmental variables can be used to set the following args:
+
+ATF_APP_IDENTIFIER             The application identifier
+ATF_DRIVER_NAME                The name of the driver.
+ATF_WEBSOCKET_URL              Websocket URL for the server.
+''');
+
+    exit(0);
+  }
 
   var device = results['device'];
   if (device?.isNotEmpty != true) {
@@ -69,11 +92,29 @@ Future<void> main(List<String> args) async {
     exit(1);
   }
 
+  var secrets = {};
+  var secretsFile = File('secret/keys.json');
+  if (secretsFile.existsSync() == true) {
+    try {
+      var data = json.decode(secretsFile.readAsStringSync());
+      secrets['driver'] = data['driver'];
+    } catch (e) {
+      // no-op
+    }
+  }
+
+  var appIdentifier = results['app'] ??
+      secrets['app'] ??
+      Platform.environment['ATF_APP_IDENTIFIER'] ??
+      'default';
+
   var driverName = results['driver'] ??
       Platform.environment['ATF_DRIVER_NAME'] ??
       Platform.localHostname;
 
-  var secret = results['secret'] ?? Platform.environment['ATF_DRIVER_SECRET'];
+  var secret = results['secret'] ??
+      secrets['driver'] ??
+      Platform.environment['ATF_DRIVER_SECRET'];
   if (secret?.isNotEmpty != true) {
     logger.severe(
       'Environment variable "ATF_DRIVER_SECRET" not found, and [secret] arg not set.',
@@ -108,7 +149,9 @@ Future<void> main(List<String> args) async {
     exit(1);
   }
 
-  var url = results['url'] ?? Platform.environment['ATF_WEBSOCKET_URL'];
+  var url = results['url'] ??
+      secrets['url'] ??
+      Platform.environment['ATF_WEBSOCKET_URL'];
   if (url?.isNotEmpty != true) {
     logger.severe(
       'Environment variable "ATF_WEBSOCKET_URL" not found, and [url] arg not set.',
