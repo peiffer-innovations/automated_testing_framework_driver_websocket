@@ -1,3 +1,8 @@
+## [1.0.0+2] - October 3rd, 2021
+
+* More documentation updates
+
+
 ## [1.0.0+1] - May 31st, 2021
 
 * Added documentation
