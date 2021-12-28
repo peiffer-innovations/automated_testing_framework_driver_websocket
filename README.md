@@ -23,6 +23,8 @@ When launched, the application will attempt to connect to the server using the g
 
 The library supports multiple built in [Commands](#commands) that can be sent via a driver script or program.  It also provides a plugin mechanism for libraries or applications to provide their own commands that can be sent and executed by a host device.
 
+The library contains the code for both creating drivers as well as embedding the framework within the Flutter application.  The drivers can be Flutter, CLIs, or any other pure Dart setup.
+
 
 ## App Usage
 
