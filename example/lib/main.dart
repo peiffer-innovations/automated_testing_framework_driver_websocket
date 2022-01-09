@@ -45,7 +45,7 @@ void main() {
       gestures: gestures,
       onInitComplete: (controller) async {
         var config = json.decode(
-          await rootBundle.loadString('assets/config.json'),
+          await rootBundle.loadString('assets/config/config.json'),
         );
         var communicator = WebSocketTestDeviceCommunicator(
           secret: config['secret'],
