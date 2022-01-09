@@ -1,3 +1,8 @@
+## [1.0.1] - January 9th, 2022
+
+* Dependency updates
+
+
 ## [1.0.0+3] - October 3rd, 2021
 
 * More documentation updates
