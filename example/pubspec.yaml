@@ -11,7 +11,7 @@ environment:
 dependencies:
   automated_testing_framework_driver_websocket:
     path: ../
-  automated_testing_framework_example: ^2.2.2
+  automated_testing_framework_example: ^2.2.3
   flutter:
     sdk: flutter
 
