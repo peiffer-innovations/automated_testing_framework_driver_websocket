@@ -1,31 +1,26 @@
-name: automated_testing_framework_driver_websocket
-description: Websocket based driver for the automated testing framework.
-version: 2.0.0
-homepage: https://github.com/peiffer-innovations/automated_testing_framework_driver_websocket
+name: 'automated_testing_framework_driver_websocket'
+description: 'Websocket based driver for the automated testing framework.'
+version: '2.0.0+1'
+homepage: 'https://github.com/peiffer-innovations/automated_testing_framework_driver_websocket'
 
-environment:
+environment: 
   sdk: '>=2.17.0 <3.0.0'
 
-dependencies:
-  args: ^2.3.1
-  automated_testing_framework_models: ^2.0.9
-  convert: ^3.0.1
-  crypto: ^3.0.2
-  json_class: ^2.1.2+4
-  logging: ^1.0.1
-  meta: ^1.7.0
-  uuid: ^3.0.6
-  web_socket_channel: ^2.2.0
+dependencies: 
+  args: '^2.3.1'
+  automated_testing_framework_models: '^2.0.9+1'
+  convert: '^3.0.2'
+  crypto: '^3.0.2'
+  json_class: '^2.1.2+5'
+  logging: '^1.0.2'
+  meta: '^1.7.0'
+  uuid: '^3.0.6'
+  web_socket_channel: '^2.2.0'
 
-dev_dependencies:
-  test: ^1.21.1
-# dependency_overrides:
-#   automated_testing_framework_models:
-#     path: ../automated_testing_framework_models
+dev_dependencies: 
+  test: '^1.21.1'
 
-ignore_updates:
-  # Ignoring everything in flutter_test as those are all point-in-time entries
-  # can't upgrade without upgrading Flutter itself.
+ignore_updates: 
   - 'async'
   - 'boolean_selector'
   - 'characters'
