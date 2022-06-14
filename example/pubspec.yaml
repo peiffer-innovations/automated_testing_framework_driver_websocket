@@ -1,7 +1,7 @@
 name: 'example'
 description: 'Example project for the Automated Testing Framework.'
 publish_to: 'none'
-version: '1.0.0+3'
+version: '1.0.0+4'
 
 environment: 
   sdk: '>=2.17.0 <3.0.0'
@@ -9,7 +9,7 @@ environment:
 dependencies: 
   automated_testing_framework_driver_websocket: 
     path: '../'
-  automated_testing_framework_example: '^2.2.4+4'
+  automated_testing_framework_example: '^2.2.4+5'
   flutter: 
     sdk: 'flutter'
 
