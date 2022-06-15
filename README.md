@@ -1,3 +1,20 @@
+<!-- START doctoc generated TOC please keep comment here to allow auto update -->
+<!-- DON'T EDIT THIS SECTION, INSTEAD RE-RUN doctoc TO UPDATE -->
+**Table of Contents**
+
+- [automated_testing_framework_driver_websocket](#automated_testing_framework_driver_websocket)
+  - [Table of Contents](#table-of-contents)
+  - [Introduction](#introduction)
+  - [App Usage](#app-usage)
+  - [Example Scripts](#example-scripts)
+    - [list_devices](#list_devices)
+    - [run_test](#run_test)
+  - [Running the Example App](#running-the-example-app)
+  - [Commands](#commands)
+  - [Creating Custom Commands](#creating-custom-commands)
+
+<!-- END doctoc generated TOC please keep comment here to allow auto update -->
+
 # automated_testing_framework_driver_websocket
 
 ## Table of Contents
