@@ -1,3 +1,8 @@
+## [2.0.0+5] - July 5, 2022
+
+* Automated dependency updates
+
+
 ## [2.0.0+4] - June 28, 2022
 
 * Automated dependency updates
@@ -92,6 +97,7 @@
 * Initial release
 * TODO: Documentation!
 * TODO: Better examples.
+
 
 
 
