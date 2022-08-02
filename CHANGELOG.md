@@ -1,3 +1,8 @@
+## [2.0.0+9] - August 2, 2022
+
+* Automated dependency updates
+
+
 ## [2.0.0+8] - July 28th, 2022
 
 * Revert crypto
@@ -112,6 +117,7 @@
 * Initial release
 * TODO: Documentation!
 * TODO: Better examples.
+
 
 
 
