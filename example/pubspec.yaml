@@ -1,7 +1,7 @@
 name: 'example'
 description: 'Example project for the Automated Testing Framework.'
 publish_to: 'none'
-version: '1.0.0+9'
+version: '1.0.0+10'
 
 environment: 
   sdk: '>=2.17.0 <3.0.0'
@@ -9,7 +9,7 @@ environment:
 dependencies: 
   automated_testing_framework_driver_websocket: 
     path: '../'
-  automated_testing_framework_example: '^2.2.4+10'
+  automated_testing_framework_example: '^2.2.5'
   flutter: 
     sdk: 'flutter'
 
@@ -33,9 +33,12 @@ flutter:
   assets: 
     - 'assets/config/'
   fonts: 
-    - family: 'MaterialIcons'
+    - 
+      family: 'MaterialIcons'
       fonts: 
-        - asset: 'assets-src/MaterialIcons-Regular.ttf'
+        - 
+          asset: 'assets-src/MaterialIcons-Regular.ttf'
+
 
 
 ignore_updates: 
