@@ -25,7 +25,7 @@ Future<void> main(List<String> args) async {
   });
   final logger = Logger('main');
 
-  var parser = ArgParser();
+  final parser = ArgParser();
   parser.addOption(
     'app',
     abbr: 'a',
@@ -57,7 +57,7 @@ Future<void> main(List<String> args) async {
     help: 'URL for the server.',
   );
   parser.addFlag('help', abbr: 'h');
-  var results = parser.parse(args);
+  final results = parser.parse(args);
 
   if (results['help'] == true) {
     // ignore: avoid_print
@@ -84,7 +84,7 @@ ATF_WEBSOCKET_URL              Websocket URL for the server.
     exit(0);
   }
 
-  var device = results['device'];
+  final device = results['device'];
   if (device?.isNotEmpty != true) {
     logger.severe(
       'No device set.',
@@ -92,27 +92,27 @@ ATF_WEBSOCKET_URL              Websocket URL for the server.
     exit(1);
   }
 
-  var secrets = {};
-  var secretsFile = File('secret/keys.json');
+  final secrets = {};
+  final secretsFile = File('secret/keys.json');
   if (secretsFile.existsSync() == true) {
     try {
-      var data = json.decode(secretsFile.readAsStringSync());
+      final data = json.decode(secretsFile.readAsStringSync());
       secrets['driver'] = data['driver'];
     } catch (e) {
       // no-op
     }
   }
 
-  var appIdentifier = results['app'] ??
+  final appIdentifier = results['app'] ??
       secrets['app'] ??
       Platform.environment['ATF_APP_IDENTIFIER'] ??
       'default';
 
-  var driverName = results['driver'] ??
+  final driverName = results['driver'] ??
       Platform.environment['ATF_DRIVER_NAME'] ??
       Platform.localHostname;
 
-  var secret = results['secret'] ??
+  final secret = results['secret'] ??
       secrets['driver'] ??
       Platform.environment['ATF_DRIVER_SECRET'];
   if (secret?.isNotEmpty != true) {
@@ -122,22 +122,22 @@ ATF_WEBSOCKET_URL              Websocket URL for the server.
     exit(1);
   }
 
-  var testPath = results['test'];
+  final testPath = results['test'];
   if (testPath?.isNotEmpty != true) {
     logger.severe('No test set');
     exit(1);
   }
 
-  var tests = <Test>[];
+  final tests = <Test>[];
   if (FileSystemEntity.isDirectorySync(testPath)) {
-    var dir = Directory(testPath);
+    final dir = Directory(testPath);
     for (var file in dir.listSync()) {
       if (file is File) {
         tests.add(Test.fromDynamic(json.decode(file.readAsStringSync())));
       }
     }
   } else if (FileSystemEntity.isFileSync(testPath)) {
-    var file = File(testPath);
+    final file = File(testPath);
     tests.add(Test.fromDynamic(json.decode(file.readAsStringSync())));
   } else {
     logger.severe('Unable to locate test file: $testPath');
@@ -149,7 +149,7 @@ ATF_WEBSOCKET_URL              Websocket URL for the server.
     exit(1);
   }
 
-  var url = results['url'] ??
+  final url = results['url'] ??
       secrets['url'] ??
       Platform.environment['ATF_WEBSOCKET_URL'];
   if (url?.isNotEmpty != true) {
@@ -159,7 +159,7 @@ ATF_WEBSOCKET_URL              Websocket URL for the server.
     exit(1);
   }
 
-  var output = Directory('output/$device');
+  final output = Directory('output/$device');
   try {
     output.deleteSync(recursive: true);
   } catch (e) {
@@ -167,7 +167,7 @@ ATF_WEBSOCKET_URL              Websocket URL for the server.
   }
   output.createSync(recursive: true);
 
-  var comm = WebSocketTestDriverCommunicator(
+  final comm = WebSocketTestDriverCommunicator(
     appIdentifier: appIdentifier ?? 'default',
     driverName: driverName,
     secret: secret,
@@ -179,16 +179,16 @@ ATF_WEBSOCKET_URL              Websocket URL for the server.
   await comm.activate();
   logger.info('[ACTIVATED]');
 
-  var reserveCmd = ReserveDeviceCommand(
+  final reserveCmd = ReserveDeviceCommand(
     deviceId: device,
     driverName: driverName,
   );
-  var logCmd = StartLogStreamCommand();
-  var ssCmd = StartScreenshotStreamCommand();
+  final logCmd = StartLogStreamCommand();
+  final ssCmd = StartScreenshotStreamCommand();
   var testCmd = RunTestCommand(sendScreenshots: false, test: tests.removeAt(0));
-  var releaseCmd = ReleaseDeviceCommand(deviceId: device);
+  final releaseCmd = ReleaseDeviceCommand(deviceId: device);
 
-  var completer = Completer();
+  final completer = Completer();
   comm.commandStream.listen((command) {
     if (command is CommandAck) {
       if (command.commandId == reserveCmd.id) {
@@ -200,21 +200,21 @@ ATF_WEBSOCKET_URL              Websocket URL for the server.
           completer.completeError('Unable to reserve device');
         }
       } else if (command.commandId == logCmd.id) {
-        var response = command.response;
+        final response = command.response;
         if (response is LogResponse) {
-          var file = File(
+          final file = File(
             'output/${device}/${hex.encode(utf8.encode(testCmd.test.id))}.log',
           );
           file.createSync(recursive: true);
 
-          var record = response.record;
+          final record = response.record;
           file.writeAsString(
             '${record.level.name}: ${record.time}: [${record.loggerName}]: ${record.message}\n',
             mode: FileMode.append,
           );
         }
       } else if (command.commandId == testCmd.id) {
-        var response = command.response;
+        final response = command.response;
         if (response is TestStatusResponse) {
           logger.info('[TEST STATUS]: ${command.message}');
           if (response.complete == true) {
@@ -231,8 +231,8 @@ ATF_WEBSOCKET_URL              Websocket URL for the server.
             }
           }
         } else if (response is ScreenshotResponse) {
-          var hash = sha256.convert(response.image).toString();
-          var file = File(
+          final hash = sha256.convert(response.image).toString();
+          final file = File(
             'output/${device}/${hex.encode(utf8.encode(testCmd.test.id))}/screenshots/$hash.png',
           );
 
@@ -240,10 +240,10 @@ ATF_WEBSOCKET_URL              Websocket URL for the server.
           file.writeAsBytesSync(response.image);
         }
       } else if (command.commandId == ssCmd.id) {
-        var response = command.response;
+        final response = command.response;
         if (response is ScreenshotResponse) {
-          var dt = DateTime.now().millisecondsSinceEpoch;
-          var file = File(
+          final dt = DateTime.now().millisecondsSinceEpoch;
+          final file = File(
             'output/${device}/${hex.encode(utf8.encode(testCmd.test.id))}/screens/$dt.png',
           );
 
@@ -255,7 +255,7 @@ ATF_WEBSOCKET_URL              Websocket URL for the server.
   });
   await comm.sendCommand(reserveCmd);
 
-  var timer = Timer(Duration(minutes: 10), () {
+  final timer = Timer(const Duration(minutes: 10), () {
     completer.completeError('TIMEOUT');
   });
 

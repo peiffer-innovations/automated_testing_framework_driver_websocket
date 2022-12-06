@@ -176,9 +176,9 @@ class WebSocketTestDeviceCommunicator extends TestDeviceCommunicator {
 
   Future<void> _authenticate() async {
     Completer? completer = Completer<void>();
-    var device = await _testDeviceInfoBuilder();
+    final device = await _testDeviceInfoBuilder();
 
-    var salt = DriverSignatureHelper().createSalt();
+    final salt = DriverSignatureHelper().createSalt();
     AnnounceDeviceCommand? challenge = AnnounceDeviceCommand(
       device: device,
       salt: salt,
@@ -188,13 +188,13 @@ class WebSocketTestDeviceCommunicator extends TestDeviceCommunicator {
     var challengeResponded = false;
     var signatureVerified = false;
 
-    var sub = _channel?.stream.listen(
+    final sub = _channel?.stream.listen(
       (data) {
         try {
-          var cmd = DeviceCommand.fromDynamic(json.decode(data));
+          final cmd = DeviceCommand.fromDynamic(json.decode(data));
 
           if (cmd is ChallengeCommand) {
-            var signature = DriverSignatureHelper().createSignature(_secret, [
+            final signature = DriverSignatureHelper().createSignature(_secret, [
               cmd.salt,
               cmd.timestamp.millisecondsSinceEpoch.toString(),
             ]);
@@ -217,7 +217,7 @@ class WebSocketTestDeviceCommunicator extends TestDeviceCommunicator {
             throw Exception('Timeout waiting for challenge response');
           } else if (cmd is ChallengeResponseCommand &&
               cmd.commandId == challenge!.id) {
-            var signature = DriverSignatureHelper().createSignature(_secret, [
+            final signature = DriverSignatureHelper().createSignature(_secret, [
               challenge!.salt,
               challenge!.timestamp.millisecondsSinceEpoch.toString(),
             ]);
@@ -292,8 +292,8 @@ class WebSocketTestDeviceCommunicator extends TestDeviceCommunicator {
 
     Timer? timer;
     try {
-      var startTime = DateTime.now();
-      timer = Timer.periodic(Duration(seconds: 60), (_) {
+      final startTime = DateTime.now();
+      timer = Timer.periodic(const Duration(seconds: 60), (_) {
         if (Duration(
                     milliseconds: DateTime.now().millisecondsSinceEpoch -
                         startTime.millisecondsSinceEpoch)
@@ -344,8 +344,8 @@ class WebSocketTestDeviceCommunicator extends TestDeviceCommunicator {
 
     if (active == true) {
       try {
-        var uri = Uri.parse(url);
-        var channel = await WebSocketChannel.connect(uri);
+        final uri = Uri.parse(url);
+        final channel = await WebSocketChannel.connect(uri);
         _channel = channel;
         _reconnectTimer?.cancel();
         _reconnectTimer = Timer(maxConnectionTime, () => _connect());
@@ -359,18 +359,18 @@ class WebSocketTestDeviceCommunicator extends TestDeviceCommunicator {
         _logger.severe('[ERROR]: connection error', e, stack);
         _online = false;
         _reconnectTimer?.cancel();
-        _reconnectTimer = Timer(Duration(seconds: 1), () => _connect());
+        _reconnectTimer = Timer(const Duration(seconds: 1), () => _connect());
       }
     }
   }
 
   void _sendCommands() {
     if (active == true && _commandQueue.isNotEmpty == true) {
-      var delay = Duration(seconds: 1);
+      var delay = const Duration(seconds: 1);
       if (_channel?.closeCode == null) {
         delay = Duration.zero;
 
-        var command = _commandQueue.removeAt(0);
+        final command = _commandQueue.removeAt(0);
         _channel?.sink.add(command.toString());
         if (command is! CommandAck) {
           // Don't log out ACK's because if the log streaming is active, this

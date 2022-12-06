@@ -23,7 +23,7 @@ Future<void> main(List<String> args) async {
   });
   final logger = Logger('main');
 
-  var parser = ArgParser();
+  final parser = ArgParser();
   parser.addOption(
     'app',
     abbr: 'a',
@@ -46,7 +46,7 @@ Future<void> main(List<String> args) async {
   );
 
   parser.addFlag('help', abbr: 'h');
-  var results = parser.parse(args);
+  final results = parser.parse(args);
 
   if (results['help'] == true) {
     // ignore: avoid_print
@@ -72,26 +72,26 @@ ATF_WEBSOCKET_URL              Websocket URL for the server.
   }
 
   var secrets = {};
-  var secretsFile = File('secret/keys.json');
+  final secretsFile = File('secret/keys.json');
   if (secretsFile.existsSync() == true) {
     try {
-      var data = json.decode(secretsFile.readAsStringSync());
+      final data = json.decode(secretsFile.readAsStringSync());
       secrets = data;
     } catch (e) {
       // no-op
     }
   }
 
-  var appIdentifier = results['app'] ??
+  final appIdentifier = results['app'] ??
       secrets['app'] ??
       Platform.environment['ATF_APP_IDENTIFIER'] ??
       'default';
 
-  var driverName = results['driver'] ??
+  final driverName = results['driver'] ??
       Platform.environment['ATF_DRIVER_NAME'] ??
       Platform.localHostname;
 
-  var secret = results['secret'] ??
+  final secret = results['secret'] ??
       secrets['driver'] ??
       Platform.environment['ATF_DRIVER_SECRET'];
 
@@ -102,7 +102,7 @@ ATF_WEBSOCKET_URL              Websocket URL for the server.
     exit(1);
   }
 
-  var url = results['url'] ??
+  final url = results['url'] ??
       secrets['url'] ??
       Platform.environment['ATF_WEBSOCKET_URL'];
   if (url?.isNotEmpty != true) {
@@ -120,7 +120,7 @@ Parameters:
 
 ''');
 
-  var comm = WebSocketTestDriverCommunicator(
+  final comm = WebSocketTestDriverCommunicator(
     appIdentifier: appIdentifier ?? 'default',
     driverName: driverName,
     secret: secret,
@@ -132,13 +132,13 @@ Parameters:
   await comm.activate();
   logger.info('[ACTIVATED]');
 
-  var cmd = ListDevicesCommand();
-  var completer = Completer();
+  final cmd = ListDevicesCommand();
+  final completer = Completer();
   comm.commandStream.listen((command) {
     if (command is CommandAck && command.commandId == cmd.id) {
-      var response = command.response;
+      final response = command.response;
       if (response is ListDevicesResponse) {
-        var devices = response.devices;
+        final devices = response.devices;
         var count = 0;
         for (var device in devices) {
           count++;
@@ -161,7 +161,7 @@ Parameters:
   });
   await comm.sendCommand(cmd);
 
-  var timer = Timer(Duration(seconds: 10), () {
+  final timer = Timer(const Duration(seconds: 10), () {
     completer.completeError('TIMEOUT');
   });
 

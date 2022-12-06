@@ -44,10 +44,10 @@ void main() {
       enabled: true,
       gestures: gestures,
       onInitComplete: (controller) async {
-        var config = json.decode(
+        final config = json.decode(
           await rootBundle.loadString('assets/config/config.json'),
         );
-        var communicator = WebSocketTestDeviceCommunicator(
+        final communicator = WebSocketTestDeviceCommunicator(
           secret: config['secret'],
           testControllerState: controller.state,
           url: config['url'],
@@ -55,7 +55,7 @@ void main() {
         await communicator.activate(
           () => TestDeviceInfoHelper.initialize(null),
         );
-        var testDriver = TestDriver(
+        final testDriver = TestDriver(
           communicator: communicator,
           testController: controller,
         );

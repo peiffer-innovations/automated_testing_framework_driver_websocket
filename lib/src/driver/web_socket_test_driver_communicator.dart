@@ -1,5 +1,4 @@
 import 'dart:async';
-
 import 'dart:convert';
 
 import 'package:automated_testing_framework_models/automated_testing_framework_models.dart';
@@ -53,7 +52,7 @@ class WebSocketTestDriverCommunicator {
     required String secret,
     required this.url,
   })  : assert(secret.isNotEmpty == true),
-        driverId = driverId ?? Uuid().v4(),
+        driverId = driverId ?? const Uuid().v4(),
         _logger = logger ?? Logger('WebSocketTestDriverCommunicator'),
         _secret = secret;
 
@@ -205,9 +204,9 @@ class WebSocketTestDriverCommunicator {
   }
 
   Future<void> _authenticate() async {
-    var completer = Completer<void>();
+    final completer = Completer<void>();
 
-    var salt = DriverSignatureHelper().createSalt();
+    final salt = DriverSignatureHelper().createSalt();
     AnnounceDriverCommand? challenge = AnnounceDriverCommand(
       appIdentifier: appIdentifier,
       driverId: driverId,
@@ -218,13 +217,13 @@ class WebSocketTestDriverCommunicator {
     var challengeResponded = false;
     var signatureVerified = false;
 
-    var sub = _channel!.stream.listen(
+    final sub = _channel!.stream.listen(
       (data) {
         try {
-          var cmd = DeviceCommand.fromDynamic(json.decode(data));
+          final cmd = DeviceCommand.fromDynamic(json.decode(data));
 
           if (cmd is ChallengeCommand) {
-            var signature = DriverSignatureHelper().createSignature(_secret, [
+            final signature = DriverSignatureHelper().createSignature(_secret, [
               cmd.salt,
               cmd.timestamp.millisecondsSinceEpoch.toString(),
             ]);
@@ -247,7 +246,7 @@ class WebSocketTestDriverCommunicator {
             throw Exception('Timeout waiting for challenge response');
           } else if (cmd is ChallengeResponseCommand &&
               cmd.commandId == challenge!.id) {
-            var signature = DriverSignatureHelper().createSignature(_secret, [
+            final signature = DriverSignatureHelper().createSignature(_secret, [
               challenge!.salt,
               challenge!.timestamp.millisecondsSinceEpoch.toString(),
             ]);
@@ -295,8 +294,8 @@ class WebSocketTestDriverCommunicator {
 
     Timer? timer;
     try {
-      var startTime = DateTime.now();
-      timer = Timer.periodic(Duration(seconds: 60), (_) {
+      final startTime = DateTime.now();
+      timer = Timer.periodic(const Duration(seconds: 60), (_) {
         if (Duration(
                     milliseconds: DateTime.now().millisecondsSinceEpoch -
                         startTime.millisecondsSinceEpoch)
@@ -307,7 +306,7 @@ class WebSocketTestDriverCommunicator {
 
           _connect();
         } else {
-          var salt = DriverSignatureHelper().createSalt();
+          final salt = DriverSignatureHelper().createSalt();
           challenge = AnnounceDriverCommand(
             appIdentifier: appIdentifier,
             driverId: driverId,
@@ -349,8 +348,8 @@ class WebSocketTestDriverCommunicator {
 
     if (active == true) {
       try {
-        var uri = Uri.parse(url);
-        var channel = await WebSocketChannel.connect(uri);
+        final uri = Uri.parse(url);
+        final channel = await WebSocketChannel.connect(uri);
         _channel = channel;
         _reconnectTimer?.cancel();
         _reconnectTimer = Timer(maxConnectionTime, () {
@@ -373,18 +372,18 @@ class WebSocketTestDriverCommunicator {
         _logger.severe('[ERROR]: connection error', e, stack);
         _online = false;
         _reconnectTimer?.cancel();
-        _reconnectTimer = Timer(Duration(seconds: 1), () => _connect());
+        _reconnectTimer = Timer(const Duration(seconds: 1), () => _connect());
       }
     }
   }
 
   Future<void> _sendCommands() async {
     if (active == true && _commandQueue.isNotEmpty == true) {
-      var delay = Duration(milliseconds: 100);
+      var delay = const Duration(milliseconds: 100);
       if (_online == true) {
         delay = Duration.zero;
 
-        var command = _commandQueue.removeAt(0);
+        final command = _commandQueue.removeAt(0);
         try {
           _channel!.sink.add(command.toString());
           _logger.finer('[SEND COMMAND]: command sent: [${command.type}]');
@@ -392,7 +391,7 @@ class WebSocketTestDriverCommunicator {
           _logger.fine(
             '[SEND COMMAND]: error sending command, retrying in 1 second.',
           );
-          delay = Duration(seconds: 1);
+          delay = const Duration(seconds: 1);
         }
       }
 
