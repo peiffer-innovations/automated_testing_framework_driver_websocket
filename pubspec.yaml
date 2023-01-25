@@ -3,12 +3,12 @@ description: 'Websocket based driver for the automated testing framework.'
 version: '2.0.0+24'
 homepage: 'https://github.com/peiffer-innovations/automated_testing_framework_driver_websocket'
 
-environment: 
-  sdk: '>=2.18.0 <3.0.0'
+environment:
+  sdk: '>=2.19.0 <3.0.0'
 
-dependencies: 
+dependencies:
   args: '^2.3.2'
-  automated_testing_framework_models: '^2.0.9+16'
+  automated_testing_framework_models: '^2.0.10'
   convert: '^3.1.1'
   crypto: '^3.0.1'
   json_class: '^2.1.4+1'
@@ -17,10 +17,10 @@ dependencies:
   uuid: '^3.0.7'
   web_socket_channel: '^2.3.0'
 
-dev_dependencies: 
+dev_dependencies:
   test: '^1.22.2'
 
-ignore_updates: 
+ignore_updates:
   - 'archive'
   - 'async'
   - 'boolean_selector'
