@@ -1,13 +1,13 @@
 name: 'automated_testing_framework_driver_websocket'
 description: 'Websocket based driver for the automated testing framework.'
-version: '2.0.0+37'
+version: '2.0.0+38'
 homepage: 'https://github.com/peiffer-innovations/automated_testing_framework_driver_websocket'
 
 environment: 
   sdk: '>=2.19.0 <4.0.0'
 
 dependencies: 
-  args: '^2.4.0'
+  args: '^2.4.1'
   automated_testing_framework_models: '^2.0.10+8'
   convert: '^3.1.1'
   crypto: '^3.0.1'
